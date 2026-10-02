@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Retail</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body>
+
+<div id="loading" class="loading-screen">
+    <div class="loading-spinner"></div>
+    <p>Cargando dashboard...</p>
+</div>
+
+<nav class="dash-tabs" id="dashTabs" style="display: none;">
+    <a href="#" class="tab active" data-seccion="ventas"><i class="fas fa-chart-line"></i> Ventas</a>
+    <a href="#" class="tab" data-seccion="ganancias"><i class="fas fa-coins"></i> Ganancias</a>
+    <a href="#" class="tab" data-seccion="ranking"><i class="fas fa-trophy"></i> Ranking</a>
+    <a href="#" class="tab" data-seccion="detalle"><i class="fas fa-table"></i> Detalle</a>
+</nav>
+
+<!-- VENTAS -->
+<div id="ventas" class="dashboard-section" style="display:none;">
+    <header class="exec-header">
+        <div class="exec-title">
+            <div class="exec-logo"><i class="fas fa-chart-line"></i></div>
+            <div><h1>Ventas</h1><span class="exec-subtitle">Ingresos · Unidades · Región · Categoría</span></div>
+        </div>
+        <div class="exec-actions"><span class="exec-date"><i class="fas fa-calendar-alt"></i> <span id="fechaActual1"></span></span></div>
+    </header>
+    <section class="kpi-row" id="kpiVentas"></section>
+    <section class="filters-row">
+        <div class="filter-chip"><i class="fas fa-map-marker-alt"></i><select id="filterRegionV" class="filter-select"><option value="">Región</option></select></div>
+        <div class="filter-chip"><i class="fas fa-tags"></i><select id="filterCategoriaV" class="filter-select"><option value="">Categoría</option></select></div>
+        <div class="filter-chip"><i class="fas fa-user-tie"></i><select id="filterVendedorV" class="filter-select"><option value="">Vendedor</option></select></div>
+        <button id="clearVentas" class="btn-clear-chips"><i class="fas fa-eraser"></i> Limpiar</button>
+    </section>
+    <section class="charts-exec" id="chartsVentas"></section>
+</div>
+
+<!-- GANANCIAS -->
+<div id="ganancias" class="dashboard-section" style="display:none;">
+    <header class="exec-header">
+        <div class="exec-title">
+            <div class="exec-logo"><i class="fas fa-coins"></i></div>
+            <div><h1>Ganancias</h1><span class="exec-subtitle">Margen · Costo · Rentabilidad</span></div>
+        </div>
+        <div class="exec-actions"><span class="exec-date"><i class="fas fa-calendar-alt"></i> <span id="fechaActual2"></span></span></div>
+    </header>
+    <section class="kpi-row" id="kpiGanancias"></section>
+    <section class="filters-row">
+        <div class="filter-chip"><i class="fas fa-map-marker-alt"></i><select id="filterRegionG" class="filter-select"><option value="">Región</option></select></div>
+        <div class="filter-chip"><i class="fas fa-tags"></i><select id="filterCategoriaG" class="filter-select"><option value="">Categoría</option></select></div>
+        <div class="filter-chip"><i class="fas fa-user-tie"></i><select id="filterVendedorG" class="filter-select"><option value="">Vendedor</option></select></div>
+        <button id="clearGanancias" class="btn-clear-chips"><i class="fas fa-eraser"></i> Limpiar</button>
+    </section>
+    <section class="charts-exec" id="chartsGanancias"></section>
+</div>
+
+<!-- RANKING -->
+<div id="ranking" class="dashboard-section" style="display:none;">
+    <header class="exec-header">
+        <div class="exec-title">
+            <div class="exec-logo"><i class="fas fa-trophy"></i></div>
+            <div><h1>Ranking</h1><span class="exec-subtitle">Top vendedores · Categorías rentables</span></div>
+        </div>
+        <div class="exec-actions"><span class="exec-date"><i class="fas fa-calendar-alt"></i> <span id="fechaActual3"></span></span></div>
+    </header>
+    <section class="kpi-row" id="kpiRanking"></section>
+    <section class="filters-row">
+        <div class="filter-chip"><i class="fas fa-map-marker-alt"></i><select id="filterRegionR" class="filter-select"><option value="">Región</option></select></div>
+        <div class="filter-chip"><i class="fas fa-tags"></i><select id="filterCategoriaR" class="filter-select"><option value="">Categoría</option></select></div>
+        <button id="clearRanking" class="btn-clear-chips"><i class="fas fa-eraser"></i> Limpiar</button>
+    </section>
+    <section class="charts-exec" id="chartsRanking"></section>
+</div>
+
+<!-- DETALLE -->
+<div id="detalle" class="dashboard-section" style="display:none;">
+    <header class="exec-header">
+        <div class="exec-title">
+            <div class="exec-logo"><i class="fas fa-table"></i></div>
+            <div><h1>Detalle de Ventas</h1><span class="exec-subtitle">Registro completo</span></div>
+        </div>
+        <div class="exec-actions"><span class="exec-date"><i class="fas fa-calendar-alt"></i> <span id="fechaActual4"></span></span></div>
+    </header>
+    <section class="filters-row">
+        <div class="filter-chip"><i class="fas fa-map-marker-alt"></i><select id="filterRegionD" class="filter-select"><option value="">Región</option></select></div>
+        <div class="filter-chip"><i class="fas fa-tags"></i><select id="filterCategoriaD" class="filter-select"><option value="">Categoría</option></select></div>
+        <div class="filter-chip"><i class="fas fa-user-tie"></i><select id="filterVendedorD" class="filter-select"><option value="">Vendedor</option></select></div>
+        <button id="clearDetalle" class="btn-clear-chips"><i class="fas fa-eraser"></i> Limpiar</button>
+    </section>
+    <section class="charts-exec">
+        <div class="chart-exec-card chart-full-table">
+            <div class="chart-exec-header"><i class="fas fa-list chart-icon"></i><h3>Detalle completo</h3></div>
+            <div id="tablaDetalle" class="tabla-scroll"></div>
+        </div>
+    </section>
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
